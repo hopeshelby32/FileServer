@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -445,9 +446,25 @@ Scanner read;
 			
 			if(parse.next().equals(to))
 			{
+				Random rand = new Random();
+				Integer iport = (rand.nextInt(1000) + 8000);
+				String port = iport.toString();
+				Integer iport2 = rand.nextInt(1000) + 8000;
+				String port2 = iport2.toString();
 				found = true;
-				ip = match.get(to).toString();
+				String ip2 = match.get(to).toString();
+				ip = match.get(user).toString();
 				socket2 = (Socket) Main.map.get(to);
+				DataOutputStream out2 = new DataOutputStream(socket2.getOutputStream());
+				
+				out2.write(port2.getBytes());
+				out2.write(ip.getBytes());
+				out2.write(port.getBytes());
+				
+				out.write(port.getBytes());
+				out.write(ip2.getBytes());
+				out.write(port2.getBytes());
+				chill();
 			}
 		}
 		if(!found)
@@ -460,9 +477,22 @@ Scanner read;
 		
 		
 	}
-	public void chill()
+	public void chill() throws Exception
 	{
-		
+
+		String input = new String();
+		boolean end = false;
+		while(!end)
+		{
+			input = get.readLine();
+			
+			if(input.equals("DISCONNECT"))
+			{
+				end = true;
+				logout();
+			}
+			
+		}
 	}
 	public void logout()
 	{
