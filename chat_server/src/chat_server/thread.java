@@ -21,7 +21,7 @@ public class thread extends Thread{
 	DataInputStream in;
 	BufferedReader get;
 	DataOutputStream out;
-	AtomicBoolean running;
+	AtomicBoolean running = new AtomicBoolean();
 	File active, account;
 	String user;
 	HashMap match;
@@ -125,7 +125,6 @@ public class thread extends Thread{
 				while(valid == false)
 				{
 					answer = get.readLine();
-					System.out.println(answer);
 					if(answer.equals("1"))
 						valid = true;
 					else if(answer.equals("2"))
@@ -168,10 +167,10 @@ public class thread extends Thread{
 		//output message
 		String message = "You've selcted \"New Member,\"\n "
 				+ "Please input your ID & password separated by a \"*\" \n"
-				+ "ex: user*123 \r\n";
+				+ "ex: user*123 \n\r\n";
 		String error = "Invalid Input\n"
 				+ "Please input your ID & password separated by a \"*\" \n"
-				+ "ex: user*123 \r\n";
+				+ "ex: user*123 \n\r\n";
 		
 		out.write(message.getBytes());
 		Scanner parse;
@@ -189,6 +188,8 @@ public class thread extends Thread{
 		{
 			read = new Scanner(account);
 			String input = get.readLine();
+			
+			System.out.println("here");
 			
 			
 			parse = new Scanner(input).useDelimiter("[*]");
@@ -219,6 +220,8 @@ public class thread extends Thread{
 				err = "Password is invalid!";
 			}
 			
+			//*****************************************************************************
+			
 			
 			if(!valid)
 			{
@@ -230,20 +233,26 @@ public class thread extends Thread{
 			
 		}
 		
+		System.out.println("1");
+		
 		//write new account to account.txt
 		write.write(id + " " + pass + "\n");
 		
 		write.flush();
 		write.close();
-		FileWriter afstream = new FileWriter(active, true);
-		BufferedWriter awrite = new BufferedWriter(fstream);
-		awrite.append(id + " " + socket.getRemoteSocketAddress().toString());
+		//FileWriter afstream = new FileWriter(active, true);
+		//BufferedWriter awrite = new BufferedWriter(fstream);
+		//awrite.append(id + " " + socket.getRemoteSocketAddress().toString());
 		
-		awrite.flush();
-		awrite.close();
+		System.out.println("2");
+		
+		//awrite.flush();
+		//awrite.close();
 		boolean success = false;
 		//originally full path was used
 		//success = (new File("C:/Users/maupi/eclipse-workspace/file-server/" + id)).mkdir();
+		
+		System.out.println("3");
 		
 		//create folder for new user
 		success = (new File(id)).mkdir();
@@ -251,9 +260,17 @@ public class thread extends Thread{
 		if(!success)
 			System.out.println("file fail");
 		
+		System.out.println("4");
 		
 		user = id;
 		Main.map.put(user, socket);
+		
+		System.out.println("5");
+		
+		out.write("LOGGEDIN\n\r\n".getBytes());
+		
+		System.out.println("6");
+		
 		display();
 	}
 	public void ExtUser() throws Exception
@@ -265,11 +282,11 @@ Scanner read;
 		//display login message
 		String message = "Log in\n "
 				+ "Please input your ID & password separated by a \"*\" \n"
-				+ "ex: user*123 \r\n";
+				+ "ex: user*123 \n\r\n";
 		String error = "Invalid Input\n"
 				+ "Please input your ID & password separated by a \"*\" \n"
 				+ "ex: user*123 \n"
-				+ "enter \"EXIT!\" to disconnect \r\n";
+				+ "enter \"EXIT!\" to disconnect \n\r\n";
 		
 		String line = null, cred = null, id = null, pass = null, aid = null, apass = null;
 		Scanner parse, check;
@@ -280,7 +297,7 @@ Scanner read;
 				+ "Please try Again\n"
 				+ "Please input your ID & password separated by a \"*\" \n"
 				+ "ex: user*123 \n"
-				+ "enter \"EXIT!\" to disconnect \r\n";
+				+ "enter \"EXIT!\" to disconnect \n\r\n";
 		
 		while(valid == false)
 		{
@@ -289,7 +306,7 @@ Scanner read;
 			if(failcount>=3)
 			{
 				String derror = "Too many tries\n"
-						+ "Disconnecting \r\n";
+						+ "Disconnecting \n\r\n";
 				out.write(derror.getBytes());
 				logout();
 			}
@@ -324,6 +341,8 @@ Scanner read;
 
 						Main.map.put(user, socket);
 						
+						out.write("LOGGEDIN\n\r\n".getBytes());
+						
 						display();
 						break;
 					}
@@ -353,7 +372,7 @@ Scanner read;
 			String user = parse.next();
 			String IP = parse.next();
 			match.put(user, IP);
-			users = users.concat(user + "/n");
+			users = users.concat(user + "\n");
 			
 			c++;
 			
@@ -363,17 +382,21 @@ Scanner read;
 			users = "No Users Found";
 			activeuser = false;
 		}
-		String message = dis + users + "\n\r\n";
+		String message = dis + users + "\r\n";
 		out.write(message.getBytes());
 		String t = new String();
 		
 
+		
 		get = new BufferedReader(new InputStreamReader(in));
 		
 		if(activeuser)
 		{
-			String query = "If you would like to connect with one of the above listed, \nEnter 1"
-					+ "If you would like to wait for another user to connect, \nEnter 2";
+			String query = "If you would like to connect with one of the above listed, \nEnter 1\n"
+					+ "If you would like to wait for another user to connect, \nEnter 2\n"
+					+ "If you would like to disconnect, \nEnter 3\n\r\n";
+			
+			out.write(query.getBytes());
 			t = get.readLine();
 			boolean valid = false;
 			while(!valid)
@@ -385,25 +408,42 @@ Scanner read;
 				}
 				else if (t.equals("2"))
 				{
+					
+					FileWriter fstream = new FileWriter(active, true);
+					BufferedWriter write = new BufferedWriter(fstream);
+					write.append(user + " " + socket.getRemoteSocketAddress().toString());
+					write.flush();
+					write.close();
+					
+					
 					chill();
+					
+					valid = true;
+				}
+				else if (t.equals("3"))
+				{
+					logout();
 					valid = true;
 				}
 			}
 		}
 		else
 		{
-			String query = "No other users are currently active. \n Enter 1 to wait for another user to connect\n"
-					+ "Enter 2 to disconnect";
+			String query = "No other users are currently active. \n"
+					+ "Enter 2 to wait for another user to connect\n"
+					+ "Enter 3 to disconnect\n\r\n";
+			
+			out.write(query.getBytes());
 			t = get.readLine();
 			boolean valid = false;
 			while(!valid)
 			{
-				if(t.equals("1"))
+				if(t.equals("2"))
 				{
 					chill();
 					valid = true;
 				}
-				else if (t.equals("2"))
+				else if (t.equals("3"))
 				{
 					logout();
 					valid = true;
