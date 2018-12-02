@@ -212,13 +212,11 @@ public class Main {
 		Scanner scan = new Scanner(System.in);
 		String answer;
 		boolean valid = false;
+		
 		while(!(line = get.readLine()).isEmpty())
 		{
 			System.out.println(line);
 		}
-		
-		
-		
 		
 		while(!valid)
 		{
@@ -230,16 +228,21 @@ public class Main {
 			
 			if(answer.equals("1"))
 			{
+				out.write((answer + "\n").getBytes());
+				//String name = scan.nextLine();
+				
 				Connect();
 				valid = true;
 			}
 			else if(answer.equals("2"))
 			{
+				out.write((answer + "\n").getBytes());
 				Connect();
 				valid = true;
 			}
 			else if(answer.equals("3"))
 			{
+				out.write((answer + "\n").getBytes());
 				logout();
 				valid = true;
 			}
@@ -247,36 +250,77 @@ public class Main {
 	}
 	public static void Connect() throws Exception
 	{
+		
+		System.out.println("1");
+		
 		String line;
 		while(!(line = get.readLine()).isEmpty())
 		{
 			System.out.println(line);
 		}
 		
+		System.out.println("2");
+		
 		String ip, temp;
 		
 		Scanner parse;
 		
-		Integer myport, port;
+		Integer myport = 0, port = 0;
+		
+		System.out.println("3");
+		
+		Scanner scan = new Scanner(System.in);
+		boolean coolio = false;
+		while(!coolio)
+		{
+			String name = scan.nextLine();
+			out.write((name + "\n").getBytes());
+			String t = get.readLine();
+			if(t.equals("coolio"))
+				coolio = true;
+		}
+		
+		System.out.println("made it here");
 		
 		temp = get.readLine();
-		parse = new Scanner(temp);
-		myport = parse.nextInt();
-		parse.close();
+		//temp = get.readLine();
+		//parse = new Scanner(temp);
+		System.out.println("dough");
+		//myport = parse.nextInt();
+		System.out.println(temp);
+		myport = myport.parseInt(temp);
+		//parse.close();
 		
+		System.out.println("4");
 		
-		ip = get.readLine();
+		String temp2 = get.readLine();
 		
+		System.out.println("5");
 		
 		temp = get.readLine();
-		parse = new Scanner(temp);
-		port = parse.nextInt();
-		parse.close();
+		//parse = new Scanner(temp);
+		//port = parse.nextInt();
+		port = port.parseInt(temp);
+		//parse.close();
 		
+		Scanner fix = new Scanner(temp2).skip("/").useDelimiter("[:]");
+		
+		ip = fix.next();
+		
+		System.out.println(ip);
+		
+		System.out.println("6");
 		host = new HostThread(myport);
-		client = new ClientThread(ip, port);
+		System.out.println("7");
 		
 		host.start();
+		
+		client = new ClientThread(ip, port);
+		
+		System.out.println("8");
+		
+		
+		client.start();
 		
 		
 	}

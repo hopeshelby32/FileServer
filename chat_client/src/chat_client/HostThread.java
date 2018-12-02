@@ -41,6 +41,7 @@ public class HostThread extends Thread {
 	
 	public void recieve() throws Exception
 	{
+		System.out.println("host recieve");
 		Socket socket = server.accept();
 		in = new DataInputStream(socket.getInputStream());
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
