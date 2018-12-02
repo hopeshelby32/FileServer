@@ -18,6 +18,7 @@ public class Main {
 	static HostThread host;
 	static ClientThread client;
 	static Socket socket;
+	static boolean coolio;
 	
 	public static void main(String[] args) throws Exception{
 
@@ -230,13 +231,14 @@ public class Main {
 			{
 				out.write((answer + "\n").getBytes());
 				//String name = scan.nextLine();
-				
+				coolio = false;
 				Connect();
 				valid = true;
 			}
 			else if(answer.equals("2"))
 			{
 				out.write((answer + "\n").getBytes());
+				coolio = true;
 				Connect();
 				valid = true;
 			}
@@ -270,7 +272,7 @@ public class Main {
 		System.out.println("3");
 		
 		Scanner scan = new Scanner(System.in);
-		boolean coolio = false;
+		
 		while(!coolio)
 		{
 			String name = scan.nextLine();

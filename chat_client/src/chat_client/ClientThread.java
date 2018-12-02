@@ -19,9 +19,15 @@ public class ClientThread extends Thread{
 	ClientThread(String ip, int port) throws Exception
 	{
 		Thread.sleep(1000);
+		System.out.println("here 1");
+		System.out.println(ip);
+		System.out.println(port);
 		socket = new Socket(ip, port);
+		System.out.println("here 2");
 		out = new DataOutputStream(socket.getOutputStream());
+		System.out.println("here 3");
 		server = Main.out;
+		System.out.println("here 4");
 	}
 	
 	@Override

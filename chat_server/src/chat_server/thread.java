@@ -367,6 +367,7 @@ Scanner read;
 		Scanner scan = new Scanner(active);
 		
 		String prompt = "Please enter the username of who you want to connect to \n";
+		String prompt2 = "Waiting...";
 		String dis =  "Currently Active Users: \n";
 		String users = new String();
 		int c = 0;
@@ -454,6 +455,8 @@ Scanner read;
 			System.out.println("reached 2");
 			
 			out.write(query.getBytes());
+			
+			out.write((prompt2 + "\n\r\n").getBytes());
 			
 			System.out.println("reached3");
 			
