@@ -34,13 +34,14 @@ public class thread extends Thread{
 		active = new File("active.txt");
 		account = new File("account.txt");
 		Main.count++;
+		running.set(true);
 		//match = new HashMap();
 	}
 	
 	public void run()
 	{
 		//run until boolean is set to false
-				running.set(true);
+				//running.set(true);
 				while(running.get())
 				{
 					try {
@@ -62,7 +63,10 @@ public class thread extends Thread{
 				String error = "Please input a valid option:\n"
 						+ "1. New User\n2. Existing User\n3. Disconnect \n\r\n";
 				
-				out.write(message.getBytes());
+				if(running.get())
+				{
+					out.write(message.getBytes());
+				}
 				
 				
 				boolean valid = false;
@@ -189,7 +193,6 @@ public class thread extends Thread{
 			read = new Scanner(account);
 			String input = get.readLine();
 			
-			System.out.println("here");
 			
 			
 			parse = new Scanner(input).useDelimiter("[*]");
@@ -233,7 +236,6 @@ public class thread extends Thread{
 			
 		}
 		
-		System.out.println("1");
 		
 		//write new account to account.txt
 		write.write(id + " " + pass + "\n");
@@ -248,7 +250,6 @@ public class thread extends Thread{
 		
 		
 		
-		System.out.println("2");
 		
 		//awrite.flush();
 		//awrite.close();
@@ -256,7 +257,6 @@ public class thread extends Thread{
 		//originally full path was used
 		//success = (new File("C:/Users/maupi/eclipse-workspace/file-server/" + id)).mkdir();
 		
-		System.out.println("3");
 		
 		//create folder for new user
 		success = (new File(id)).mkdir();
@@ -264,22 +264,19 @@ public class thread extends Thread{
 		if(!success)
 			System.out.println("file fail");
 		
-		System.out.println("4");
 		
 		user = id;
 		Main.map.put(user, socket);
 		
-		System.out.println("5");
-		
 		out.write("LOGGEDIN\n\r\n".getBytes());
 		
-		System.out.println("6");
+		Main.match.put(user, socket.getRemoteSocketAddress().toString());
 		
 		display();
 	}
 	public void ExtUser() throws Exception
 	{
-Scanner read;
+		Scanner read;
 		
 		boolean valid = false;
 		
@@ -442,7 +439,6 @@ Scanner read;
 		}
 		else
 		{
-			System.out.println("reached 1");
 			
 			String query = "No other users are currently active. \n"
 					+ "Enter 2 to wait for another user to connect\n"
@@ -452,19 +448,16 @@ Scanner read;
 					+ "Enter 2 to wait for another user to connect\n"
 					+ "Enter 3 to disconnect\n\r\n";
 			
-			System.out.println("reached 2");
 			
 			out.write(query.getBytes());
 			
 			out.write((prompt2 + "\n\r\n").getBytes());
 			
-			System.out.println("reached3");
 			
 			boolean valid = false;
 			while(!valid)
 			{
 				t = get.readLine();
-				System.out.println("test");
 				if(t.equals("2"))
 				{
 					FileWriter fstream = new FileWriter(active, true);
@@ -486,14 +479,11 @@ Scanner read;
 					out.write(error.getBytes());
 			}
 		}
-		System.out.println("reached4");
 		Scanner parse = new Scanner(users);
 		boolean valid = false;
 		while(!valid)
 		{
-			System.out.println("reached5");
 			String response = get.readLine();
-			System.out.println("reached6");
 			String confirm = "coolio\n";
 			while(parse.hasNextLine())
 			{
@@ -515,19 +505,17 @@ Scanner read;
 	}
 	public void connect(String to) throws Exception
 	{
-		System.out.println("made it here 1");
 		Socket socket2;
 		Scanner scan = new Scanner(active);
-		System.out.println("made it here 2");
+		String actfile = new String();
 		boolean found = false;
 		String ip;
-		System.out.println("made it here 3");
-		while(scan.hasNextLine() && !found)
+		while(scan.hasNextLine())
 		{
 			String line = scan.nextLine();
 			Scanner parse = new Scanner(line);
 			
-			System.out.println("made it here 4");
+			
 			
 			if(parse.next().equals(to))
 			{
@@ -537,7 +525,6 @@ Scanner read;
 				Integer iport2 = rand.nextInt(1000) + 8000;
 				String port2 = iport2.toString();
 				
-				System.out.println("made it here 5");
 				
 				found = true;
 				String ip2 = Main.match.get(to).toString();
@@ -545,7 +532,6 @@ Scanner read;
 				socket2 = (Socket) Main.map.get(to);
 				DataOutputStream out2 = new DataOutputStream(socket2.getOutputStream());
 				
-				System.out.println("made it here 6");
 				
 				out2.write((port2 + "\n").getBytes());
 				out2.write((ip + "\n").getBytes());
@@ -554,13 +540,21 @@ Scanner read;
 				out.write((port + "\n").getBytes());
 				out.write((ip2 + "\n").getBytes());
 				out.write((port2 + "\n").getBytes());
-				chill();
 			}
+			else
+				actfile = actfile.concat(line + "\n");
 		}
 		if(!found)
 		{
 			out.write("ERROR 404 USER NOT FOUND\n\r\n".getBytes());
 			logout();
+		}
+		else
+		{
+			FileWriter fstream = new FileWriter(active);
+			BufferedWriter write = new BufferedWriter(fstream);
+			write.write(actfile);
+			chill();
 		}
 		
 		
@@ -571,13 +565,11 @@ Scanner read;
 	{
 
 		
-		System.out.println("reached chill");
 		String input = new String();
 		boolean end = false;
 		while(!end)
 		{
 			input = get.readLine();
-			
 			if(input.equals("DISCONNECT"))
 			{
 				end = true;
@@ -586,16 +578,18 @@ Scanner read;
 			
 		}
 	}
-	public void logout()
+	public void logout() throws Exception
 	{
 		System.out.println("disconnecting");
+		socket.close();
+		Main.count--;
 		running.set(false);
-		try {
-			socket.close();
-			Main.count--;
+		/*try {
+		
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-		}
+		}*/
 	}
 }

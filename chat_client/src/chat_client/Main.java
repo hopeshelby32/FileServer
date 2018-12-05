@@ -76,7 +76,7 @@ public class Main {
 						valid = true;
 						response = "3\r\n";
 						out.write(response.getBytes());
-						logout();
+						logouts();
 					}
 					else
 					{
@@ -245,7 +245,7 @@ public class Main {
 			else if(answer.equals("3"))
 			{
 				out.write((answer + "\n").getBytes());
-				logout();
+				logouts();
 				valid = true;
 			}
 		}
@@ -253,7 +253,6 @@ public class Main {
 	public static void Connect() throws Exception
 	{
 		
-		System.out.println("1");
 		
 		String line;
 		while(!(line = get.readLine()).isEmpty())
@@ -261,7 +260,6 @@ public class Main {
 			System.out.println(line);
 		}
 		
-		System.out.println("2");
 		
 		String ip, temp;
 		
@@ -269,7 +267,6 @@ public class Main {
 		
 		Integer myport = 0, port = 0;
 		
-		System.out.println("3");
 		
 		Scanner scan = new Scanner(System.in);
 		
@@ -282,22 +279,18 @@ public class Main {
 				coolio = true;
 		}
 		
-		System.out.println("made it here");
 		
 		temp = get.readLine();
 		//temp = get.readLine();
 		//parse = new Scanner(temp);
-		System.out.println("dough");
 		//myport = parse.nextInt();
 		System.out.println(temp);
 		myport = myport.parseInt(temp);
 		//parse.close();
 		
-		System.out.println("4");
 		
 		String temp2 = get.readLine();
 		
-		System.out.println("5");
 		
 		temp = get.readLine();
 		//parse = new Scanner(temp);
@@ -311,15 +304,12 @@ public class Main {
 		
 		System.out.println(ip);
 		
-		System.out.println("6");
 		host = new HostThread(myport);
-		System.out.println("7");
 		
 		host.start();
 		
 		client = new ClientThread(ip, port);
 		
-		System.out.println("8");
 		
 		
 		client.start();
@@ -330,6 +320,10 @@ public class Main {
 	{
 		host.logout();
 		client.logout();
+		socket.close();
+	}
+	public static void logouts() throws Exception
+	{
 		socket.close();
 	}
 

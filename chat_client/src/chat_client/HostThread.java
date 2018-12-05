@@ -14,12 +14,14 @@ public class HostThread extends Thread {
 	
 	ServerSocket server;
 	DataInputStream in;
+	DataOutputStream out;
 	
 	//controls runtime
 	AtomicBoolean running = new AtomicBoolean(false);
 	
 	HostThread(int port) throws Exception
 	{
+		out = Main.out;
 		server = new ServerSocket(port);
 	}
 	
@@ -32,7 +34,7 @@ public class HostThread extends Thread {
 			try {
 				recieve();
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		
@@ -41,17 +43,30 @@ public class HostThread extends Thread {
 	
 	public void recieve() throws Exception
 	{
-		System.out.println("host recieve");
-		Socket socket = server.accept();
-		in = new DataInputStream(socket.getInputStream());
-		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-		
-		String line;
-		while(running.get())
+		if(!server.isClosed())
 		{
-			line = reader.readLine();
-			System.out.println(line);
+			System.out.println("host recieve");
+			Socket socket = server.accept();
+			in = new DataInputStream(socket.getInputStream());
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+		
+			String line;
+			while(running.get())
+			{
+				line = reader.readLine();
 			
+				if(line != null)
+				{
+					System.out.println(line);
+					if(line.equals("DISCONNECT"))
+					{
+
+						out.write((line + "\n").getBytes());
+						Main.logout();
+					}
+				}
+				
+			}
 		}
 	}
 	
