@@ -1,3 +1,5 @@
+//Travis Maupin
+//Hope Rangel
 package chat_server;
 
 import java.io.DataInputStream;
@@ -54,6 +56,7 @@ public class Main {
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			
+			//let only 100 concurrent users connect
 			if(count < 100)
 			{
 				new thread(socket, in, out).start();

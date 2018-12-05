@@ -1,3 +1,5 @@
+//Travis Maupin
+//Hope Rangel
 package chat_server;
 
 import java.io.BufferedReader;
@@ -24,8 +26,8 @@ public class thread extends Thread{
 	AtomicBoolean running = new AtomicBoolean();
 	File active, account;
 	String user;
-	//HashMap match;
 	
+	//constructor, initialize values
 	thread(Socket socket, DataInputStream in, DataOutputStream out)
 	{
 		this.socket = socket;
@@ -35,7 +37,6 @@ public class thread extends Thread{
 		account = new File("account.txt");
 		Main.count++;
 		running.set(true);
-		//match = new HashMap();
 	}
 	
 	public void run()
@@ -242,20 +243,12 @@ public class thread extends Thread{
 		
 		write.flush();
 		write.close();
-		//FileWriter afstream = new FileWriter(active, true);
-		//BufferedWriter awrite = new BufferedWriter(fstream);
-		//awrite.append(id + " " + socket.getRemoteSocketAddress().toString());
 		
 		
 		
 		
 		
-		
-		//awrite.flush();
-		//awrite.close();
 		boolean success = false;
-		//originally full path was used
-		//success = (new File("C:/Users/maupi/eclipse-workspace/file-server/" + id)).mkdir();
 		
 		
 		//create folder for new user
@@ -266,12 +259,16 @@ public class thread extends Thread{
 		
 		
 		user = id;
+		//place user in hash map with the corresponding socket user is on
 		Main.map.put(user, socket);
 		
+		//verify login
 		out.write("LOGGEDIN\n\r\n".getBytes());
 		
+		//place user in hash map with corresponding IP address
 		Main.match.put(user, socket.getRemoteSocketAddress().toString());
 		
+		//display user options
 		display();
 	}
 	public void ExtUser() throws Exception
@@ -300,6 +297,7 @@ public class thread extends Thread{
 				+ "ex: user*123 \n"
 				+ "enter \"EXIT!\" to disconnect \n\r\n";
 		
+		// input validation
 		while(valid == false)
 		{
 			read = new Scanner(account);
@@ -334,11 +332,7 @@ public class thread extends Thread{
 					{
 						valid = true;
 						user = id;
-						/*FileWriter fstream = new FileWriter(active, true);
-						BufferedWriter write = new BufferedWriter(fstream);
-						write.append(id + " " + socket.getRemoteSocketAddress().toString());
-						write.flush();
-						write.close();*/
+						
 
 						Main.map.put(user, socket);
 						
@@ -369,6 +363,8 @@ public class thread extends Thread{
 		String users = new String();
 		int c = 0;
 		boolean activeuser = true;
+		
+		//Get active user list along with number of active users
 		while(scan.hasNextLine())
 		{
 			String line = scan.nextLine();
@@ -381,6 +377,7 @@ public class thread extends Thread{
 			c++;
 			
 		}
+		// verify if users are actively waiting
 		if(c < 1)
 		{
 			users = "No Users Found\n";
@@ -394,17 +391,22 @@ public class thread extends Thread{
 		
 		get = new BufferedReader(new InputStreamReader(in));
 		
+		//if there are actively waiting users
 		if(activeuser)
 		{
+			//output user prompt
 			String query = "If you would like to connect with one of the above listed, \nEnter 1\n"
 					+ "If you would like to wait for another user to connect, \nEnter 2\n"
 					+ "If you would like to disconnect, \nEnter 3\n\r\n";
 			
-			out.write(query.getBytes());
-			t = get.readLine();
+			
 			boolean valid = false;
+			
+			// get input and validate
 			while(!valid)
 			{
+				out.write(query.getBytes());
+				t = get.readLine();
 				if(t.equals("1"))
 				{
 					out.write((prompt + "\r\n").getBytes());
@@ -413,11 +415,7 @@ public class thread extends Thread{
 				else if (t.equals("2"))
 				{
 					
-					/*FileWriter fstream = new FileWriter(active, true);
-					BufferedWriter write = new BufferedWriter(fstream);
-					write.append(user + " " + socket.getRemoteSocketAddress().toString());
-					write.flush();
-					write.close();*/
+					
 					
 					FileWriter fstream = new FileWriter(active, true);
 					BufferedWriter write = new BufferedWriter(fstream);
@@ -437,6 +435,7 @@ public class thread extends Thread{
 				}
 			}
 		}
+		//if there are no actively waiting users
 		else
 		{
 			
@@ -448,6 +447,7 @@ public class thread extends Thread{
 					+ "Enter 2 to wait for another user to connect\n"
 					+ "Enter 3 to disconnect\n\r\n";
 			
+			//output user prompt
 			
 			out.write(query.getBytes());
 			
@@ -455,6 +455,7 @@ public class thread extends Thread{
 			
 			
 			boolean valid = false;
+			//validate input
 			while(!valid)
 			{
 				t = get.readLine();
@@ -479,10 +480,11 @@ public class thread extends Thread{
 					out.write(error.getBytes());
 			}
 		}
-		Scanner parse = new Scanner(users);
+		
 		boolean valid = false;
 		while(!valid)
 		{
+			Scanner parse = new Scanner(users);
 			String response = get.readLine();
 			String confirm = "coolio\n";
 			while(parse.hasNextLine())
@@ -498,18 +500,21 @@ public class thread extends Thread{
 			{
 				String error = "reponse not valid \n"+
 						"enter an active user\n"+
-						users + "\n\r\n";
+						users + "\r\n";
+				out.write(error.getBytes());
 			}
 		}
 		
 	}
 	public void connect(String to) throws Exception
 	{
+		
 		Socket socket2;
 		Scanner scan = new Scanner(active);
 		String actfile = new String();
 		boolean found = false;
 		String ip;
+		//update active waiting list to remove user
 		while(scan.hasNextLine())
 		{
 			String line = scan.nextLine();
@@ -519,6 +524,7 @@ public class thread extends Thread{
 			
 			if(parse.next().equals(to))
 			{
+				//assign PORT numbers
 				Random rand = new Random();
 				Integer iport = (rand.nextInt(1000) + 8000);
 				String port = iport.toString();
@@ -532,6 +538,7 @@ public class thread extends Thread{
 				socket2 = (Socket) Main.map.get(to);
 				DataOutputStream out2 = new DataOutputStream(socket2.getOutputStream());
 				
+				//give necessary connection information to users
 				
 				out2.write((port2 + "\n").getBytes());
 				out2.write((ip + "\n").getBytes());
@@ -541,16 +548,19 @@ public class thread extends Thread{
 				out.write((ip2 + "\n").getBytes());
 				out.write((port2 + "\n").getBytes());
 			}
+			//make new active waiting file
 			else
 				actfile = actfile.concat(line + "\n");
 		}
 		if(!found)
 		{
+			//This should never be reached, but you can't be too careful
 			out.write("ERROR 404 USER NOT FOUND\n\r\n".getBytes());
 			logout();
 		}
 		else
 		{
+			//rewrite active waiting file and wait for disconnect
 			FileWriter fstream = new FileWriter(active);
 			BufferedWriter write = new BufferedWriter(fstream);
 			write.write(actfile);
@@ -564,7 +574,8 @@ public class thread extends Thread{
 	public void chill() throws Exception
 	{
 
-		
+		//Read input until receiving "DISCONNECT"
+		//logout on receiving "DISCONNECT"
 		String input = new String();
 		boolean end = false;
 		while(!end)
@@ -580,16 +591,11 @@ public class thread extends Thread{
 	}
 	public void logout() throws Exception
 	{
+		// kill all processes
 		System.out.println("disconnecting");
 		socket.close();
 		Main.count--;
 		running.set(false);
-		/*try {
 		
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-		}*/
 	}
 }

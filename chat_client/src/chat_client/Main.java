@@ -1,3 +1,5 @@
+//Travis Maupin
+//Hope Rangel
 package chat_client;
 
 import java.io.BufferedReader;
@@ -44,6 +46,7 @@ public class Main {
 				
 				String line = new String();
 				
+				// ask if new user, existing user, or if user would like to disconnect
 				
 				while(!(line = get.readLine()).isEmpty())
 				{
@@ -52,6 +55,8 @@ public class Main {
 				
 				valid = false;
 				
+				
+				//get response and validate input
 				int answer;
 				while(!valid)
 				{
@@ -92,7 +97,6 @@ public class Main {
 
 	}
 	
-	//out.write("LOGGEDIN\n\r\n".getBytes());
 	
 	public static void NewUser() throws Exception
 	{
@@ -101,6 +105,8 @@ public class Main {
 		Scanner scan = new Scanner(System.in);
 		
 		
+		
+		//display new user prompt
 		while(!(line = get.readLine()).isEmpty())
 		{
 			System.out.println(line);
@@ -109,17 +115,21 @@ public class Main {
 		valid = false;
 		String input = new String();
 		
+		
+		//input validation
 		while(!valid)
 		{
 
 			boolean format = false;
 			
-			input = scan.nextLine();
 			
-			Scanner parse = new Scanner(input).useDelimiter("[*]");
 			
 			while(!format)
 			{
+				input = scan.nextLine();
+				
+				Scanner parse = new Scanner(input).useDelimiter("[*]");
+				
 				String word;
 				if(parse.hasNext())
 					word = parse.next();
@@ -135,6 +145,7 @@ public class Main {
 					System.out.println("INCORRECT FORMAT! \n"
 							+ "Please input username and password separated by a \"*\" \n"
 							+ "Do not use any spaces");
+					
 				}
 			}
 			
@@ -150,6 +161,7 @@ public class Main {
 			}
 			
 		}
+		//choose what new user wants to do
 		Choose();
 	}
 	public static void ExtUser() throws Exception
@@ -157,24 +169,28 @@ public class Main {
 		boolean valid = false;
 		String line;
 		
+		
+		//display existing user prompt
 		while(!(line = get.readLine()).isEmpty())
 		{
 			System.out.println(line);
 		}
 		
-		String input;
+		String input = new String();
 		Scanner scan = new Scanner(System.in);
+		//validate input and log in user
 		while(!valid)
 		{
 
 			boolean format = false;
 			
-			input = scan.nextLine();
 			
-			Scanner parse = new Scanner(input).useDelimiter("[*]");
 			
 			while(!format)
 			{
+				input = scan.nextLine();
+				
+				Scanner parse = new Scanner(input).useDelimiter("[*]");
 				String word;
 				if(parse.hasNext())
 					word = parse.next();
@@ -205,6 +221,7 @@ public class Main {
 			}
 			
 		}
+		//let user choose what they want to do
 		Choose();
 	}
 	public static void Choose() throws Exception
@@ -214,11 +231,14 @@ public class Main {
 		String answer;
 		boolean valid = false;
 		
+		
+		//output options for user
 		while(!(line = get.readLine()).isEmpty())
 		{
 			System.out.println(line);
 		}
 		
+		//input validation and option choosing
 		while(!valid)
 		{
 			while(!(line = get.readLine()).isEmpty())
@@ -227,6 +247,7 @@ public class Main {
 			}
 			answer = scan.nextLine();
 			
+			//connect to an active user
 			if(answer.equals("1"))
 			{
 				out.write((answer + "\n").getBytes());
@@ -235,6 +256,7 @@ public class Main {
 				Connect();
 				valid = true;
 			}
+			//set yourself as active and wait for another user
 			else if(answer.equals("2"))
 			{
 				out.write((answer + "\n").getBytes());
@@ -242,6 +264,7 @@ public class Main {
 				Connect();
 				valid = true;
 			}
+			//disconnect
 			else if(answer.equals("3"))
 			{
 				out.write((answer + "\n").getBytes());
@@ -253,8 +276,8 @@ public class Main {
 	public static void Connect() throws Exception
 	{
 		
-		
 		String line;
+		//display connect to user prompt
 		while(!(line = get.readLine()).isEmpty())
 		{
 			System.out.println(line);
@@ -270,6 +293,7 @@ public class Main {
 		
 		Scanner scan = new Scanner(System.in);
 		
+		//make sure input is a valid, active user
 		while(!coolio)
 		{
 			String name = scan.nextLine();
@@ -277,21 +301,34 @@ public class Main {
 			String t = get.readLine();
 			if(t.equals("coolio"))
 				coolio = true;
+			else
+			{
+				System.out.println(t);
+				while(!(line = get.readLine()).isEmpty())
+				{
+					System.out.println(line);
+				}
+			}
 		}
 		
 		
+		//get connection info
+		
+		
+		//get port number that this user will be operating on
 		temp = get.readLine();
 		//temp = get.readLine();
 		//parse = new Scanner(temp);
 		//myport = parse.nextInt();
-		System.out.println(temp);
+		//System.out.println(temp);
 		myport = myport.parseInt(temp);
 		//parse.close();
 		
-		
+		//get IP address of other user
 		String temp2 = get.readLine();
 		
 		
+		//get port number other user is operating on
 		temp = get.readLine();
 		//parse = new Scanner(temp);
 		//port = parse.nextInt();
@@ -302,7 +339,7 @@ public class Main {
 		
 		ip = fix.next();
 		
-		System.out.println(ip);
+		//System.out.println(ip);
 		
 		host = new HostThread(myport);
 		
@@ -310,7 +347,7 @@ public class Main {
 		
 		client = new ClientThread(ip, port);
 		
-		
+		//connect start
 		
 		client.start();
 		
@@ -318,12 +355,14 @@ public class Main {
 	}
 	public static void logout() throws Exception
 	{
+		//logout all processes after connection has been made
 		host.logout();
 		client.logout();
 		socket.close();
 	}
 	public static void logouts() throws Exception
 	{
+		//simple logout if connection has not been made
 		socket.close();
 	}
 

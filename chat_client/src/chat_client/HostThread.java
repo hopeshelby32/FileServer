@@ -1,3 +1,5 @@
+//Travis Maupin
+//Hope Rangel
 package chat_client;
 
 import java.io.BufferedReader;
@@ -9,6 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+//receiving thread
 public class HostThread extends Thread {
 
 	
@@ -45,12 +48,12 @@ public class HostThread extends Thread {
 	{
 		if(!server.isClosed())
 		{
-			System.out.println("host recieve");
 			Socket socket = server.accept();
 			in = new DataInputStream(socket.getInputStream());
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		
 			String line;
+			// print every line received and disconnect upon receiving "DISCONNECT"
 			while(running.get())
 			{
 				line = reader.readLine();
@@ -72,6 +75,7 @@ public class HostThread extends Thread {
 	
 	public void logout() throws Exception
 	{
+		//disconnect
 		running.set(false);
 		server.close();
 	}
